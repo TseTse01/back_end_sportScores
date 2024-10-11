@@ -8,6 +8,8 @@ import * as bodyParser from 'body-parser';
 import "../models/connection"; 
 import { log } from 'console';
 const app: Application = express();
+const cors = require('cors');
+app.use(cors());
 app.use(bodyParser.json({limit: '50mb', type: 'application/vnd.api+json'}));
 
 app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
