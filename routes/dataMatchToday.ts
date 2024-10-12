@@ -3,31 +3,33 @@ import axios from "axios";
 
 export const routerDataMatchToday = Router();
 
-function getCurrentDate(): string {
-  const today = new Date();
-  const year = today.getFullYear();
-  const month = String(today.getMonth() + 1).padStart(2, "0"); // Les mois commencent à 0
-  const day = String(today.getDate()).padStart(2, "0");
+// function getCurrentDate(): string {
+//   const today = new Date();
+//   const year = today.getFullYear();
+//   const month = String(today.getMonth() + 1).padStart(2, "0"); // Les mois commencent à 0
+//   const day = String(today.getDate()).padStart(2, "0");
 
-  return `${year}-${month}-${day}`;
-}
+//   return `${year}-${month}-${day}`;
+// }
 
-routerDataMatchToday.get("/", async (req: Request, res: Response) => {
+routerDataMatchToday.get("/:currentDate", async (req: Request, res: Response) => {
+  const currentDate = req.params.currentDate;  
   try {
-    const currentDate = getCurrentDate();
+    // const currentDate = getCurrentDate();
     const response = await axios.get(`${process.env.LIEN_HTTP}`, {
       headers: {
         "x-rapidapi-host": process.env.X_RAPIDAPI_HOST,
         "x-rapidapi-key": process.env.X_RAPIDAPI_KEY,
       },
       params: {
-        date: "2024-10-05",
+        // date: "2024-10-05",
+        date: currentDate,
         // date: currentDate,
       },
     });
-
+    
     const data = response.data.response;
-
+  
     let frLigue1Data = [];
     let enPremierLeague = [];
     let deBundesliga = [];
