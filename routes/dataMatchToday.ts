@@ -22,8 +22,8 @@ routerDataMatchToday.get("/:currentDate", async (req: Request, res: Response) =>
         "x-rapidapi-key": process.env.X_RAPIDAPI_KEY,
       },
       params: {
-        // date: "2024-10-05",
-        date: currentDate,
+        date: "2024-11-09",
+        // date: currentDate,
         // date: currentDate,
       },
     });
