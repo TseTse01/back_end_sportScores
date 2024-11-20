@@ -14,6 +14,8 @@ export const routerDataMatchToday = Router();
 
 routerDataMatchToday.get("/:currentDate", async (req: Request, res: Response) => {
   const currentDate = req.params.currentDate;  
+  // console.log(currentDate);
+  
   try {
     // const currentDate = getCurrentDate();
     const response = await axios.get(`${process.env.LIEN_HTTP}`, {
@@ -22,13 +24,14 @@ routerDataMatchToday.get("/:currentDate", async (req: Request, res: Response) =>
         "x-rapidapi-key": process.env.X_RAPIDAPI_KEY,
       },
       params: {
-        date: "2024-11-09",
-        // date: currentDate,
+        // date: "2024-11-09",
+        date: currentDate,
         // date: currentDate,
       },
     });
     
     const data = response.data.response;
+    
   
     let frLigue1Data = [];
     let enPremierLeague = [];

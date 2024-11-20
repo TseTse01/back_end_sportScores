@@ -4,9 +4,10 @@ import * as express from 'express';
 import {Application, Response, Request} from 'express';
 import {router} from '../routes/user';
 import {routerDataMatchToday} from '../routes/dataMatchToday';
+import { favorisRouteFootball } from '../routes/favorisRoute';
 import * as bodyParser from 'body-parser';
 import "../models/connection"; 
-import { log } from 'console';
+
 const app: Application = express();
 const cors = require('cors');
 app.use(cors());
@@ -21,6 +22,7 @@ app.get('/', (req: Request, res: Response) => {
   
  app.use('/todos', router);
  app.use('/matchToday', routerDataMatchToday);
+ app.use('/favoris', favorisRouteFootball);
   
   app.listen(3000, () => {
     console.log('Server Express with Typescript is runing on port 3000');
