@@ -3,9 +3,9 @@ import axios from "axios";
 
 export const hockeyRouteMatchs = Router();
 
-hockeyRouteMatchs.get("/:currentDate", async (req: Request, res: Response) => {
+hockeyRouteMatchs.get("/", async (req: Request, res: Response) => {
   // res.json({result:true})
-  const currentDate = req.params.currentDate;  
+  const currentDate = req.params.currentDate;
   try {
     const response = await axios.get(`${process.env.LIEN_HTTP_HOCKEY}`, {
       headers: {
@@ -19,7 +19,7 @@ hockeyRouteMatchs.get("/:currentDate", async (req: Request, res: Response) => {
       },
     });
     const data = response.data.response;
-
+// res.json({data})
     let usaNhl = [];
     let finlandLiga1 = [];
     let swedenShl = [];
@@ -32,6 +32,7 @@ hockeyRouteMatchs.get("/:currentDate", async (req: Request, res: Response) => {
           id: d.id,
           date: d.date,
           timestamp: d.timestamp,
+          time: d.time,
           periods: {
             first: d.periods.first,
             second: d.periods.second,
@@ -42,30 +43,29 @@ hockeyRouteMatchs.get("/:currentDate", async (req: Request, res: Response) => {
           status: {
             long: d.status.long,
             short: d.status.short,
-            elapsed: d.timer,
+            elepsed: d.timer,
           },
         },
         league: {
           id: d.league.id,
-          name: d.country.name.name,
+          name: d.country.name,
           logo: d.league.logo,
           flag: d.country.flag,
+          season: d.league.season,
         },
         teams: {
           home: {
             id: d.teams.home.id,
             name: d.teams.home.name,
             logo: d.teams.home.logo,
-            winner: d.teams.home.winner,
           },
           away: {
             id: d.teams.away.id,
             name: d.teams.away.name,
             logo: d.teams.away.logo,
-            winner: d.teams.away.winner,
           },
         },
-        goals: {
+        scores: {
           home: d.scores.home,
           away: d.scores.away,
         },

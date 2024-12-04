@@ -10,9 +10,9 @@ routerDataMatchToday.get("/:currentDate", async (req: Request, res: Response) =>
   
   try {
     // const currentDate = getCurrentDate();
-    const response = await axios.get(`${process.env.LIEN_HTTP}`, {
+    const response = await axios.get(`${process.env.LIEN_HTTP_FOOTBALL}`, {
       headers: {
-        "x-rapidapi-host": process.env.X_RAPIDAPI_HOST,
+        "x-rapidapi-host": process.env.X_RAPIDAPI_HOST_FOOTBALL,
         "x-rapidapi-key": process.env.X_RAPIDAPI_KEY,
       },
       params: {
