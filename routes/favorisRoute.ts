@@ -17,6 +17,7 @@ favorisRouteFootball.get('/:ids', async (req: Request, res: Response) => {
             params: {
                 // date: "2024-11-09",
                 ids: ids,
+                timezone: "Europe/Paris",
             },
         });
 

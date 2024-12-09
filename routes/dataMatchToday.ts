@@ -18,7 +18,7 @@ routerDataMatchToday.get("/:currentDate", async (req: Request, res: Response) =>
       params: {
         // date: "2024-11-09",
         date: currentDate,
-        // date: currentDate,
+        timezone: "Europe/Paris",
       },
     });
     

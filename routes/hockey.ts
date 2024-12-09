@@ -3,7 +3,7 @@ import axios from "axios";
 
 export const hockeyRouteMatchs = Router();
 
-hockeyRouteMatchs.get("/", async (req: Request, res: Response) => {
+hockeyRouteMatchs.get("/:currentDate", async (req: Request, res: Response) => {
   // res.json({result:true})
   const currentDate = req.params.currentDate;
   try {
@@ -13,13 +13,16 @@ hockeyRouteMatchs.get("/", async (req: Request, res: Response) => {
         "x-rapidapi-key": process.env.X_RAPIDAPI_KEY,
       },
       params: {
-        date: "2024-11-17",
-        // date: currentDate,
+        // date: "2024-11-17",
+        date: currentDate,
+        timezone: "Europe/Paris",
         // ids: ids,
       },
     });
     const data = response.data.response;
 // res.json({data})
+// console.log(data);
+
     let usaNhl = [];
     let finlandLiga1 = [];
     let swedenShl = [];
@@ -48,10 +51,11 @@ hockeyRouteMatchs.get("/", async (req: Request, res: Response) => {
         },
         league: {
           id: d.league.id,
-          name: d.country.name,
+          country: d.country.name,
           logo: d.league.logo,
           flag: d.country.flag,
           season: d.league.season,
+          name: d.league.name,
         },
         teams: {
           home: {
