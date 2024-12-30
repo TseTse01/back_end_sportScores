@@ -3,7 +3,7 @@ import axios from "axios";
 
 export const rugbyRouteMatchs = Router();
 
-rugbyRouteMatchs.get("/", async (req: Request, res: Response) => {
+rugbyRouteMatchs.get("/:currentDate", async (req: Request, res: Response) => {
   // res.json({result:true})
   const currentDate = req.params.currentDate;
   try {
@@ -13,8 +13,8 @@ rugbyRouteMatchs.get("/", async (req: Request, res: Response) => {
         "x-rapidapi-key": process.env.X_RAPIDAPI_KEY,
       },
       params: {
-        // date: currentDate,
-        date: "2024-12-13",
+        date: currentDate,
+        // date: "2024-12-13",
         timezone: "Europe/Paris",
       },
     });

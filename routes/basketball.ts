@@ -4,9 +4,9 @@ import axios from "axios";
 export const basketballRouteMatchs = Router();
 
 
-basketballRouteMatchs.get("/", async (req: Request, res: Response) => {
+basketballRouteMatchs.get("/:currentDate", async (req: Request, res: Response) => {
     // res.json({result:true})
-    // const currentDate = req.params.currentDate;
+    const currentDate = req.params.currentDate;
     try {
       const response = await axios.get(`${process.env.LIEN_HTTP_BASKETBALL}`, {
         headers: {
@@ -14,9 +14,9 @@ basketballRouteMatchs.get("/", async (req: Request, res: Response) => {
           "x-rapidapi-key": process.env.X_RAPIDAPI_KEY,
         },
         params: {
-          date: "2024-12-10",
+          // date: "2024-12-10",
           timezone: "Europe/Paris",
-        //   date: currentDate,
+          date: currentDate,
           // ids: ids,
         //   name: "USA",
         },
