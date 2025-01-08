@@ -4,7 +4,7 @@ import axios from "axios";
 export const favorisRouteFootball = Router();
 
 favorisRouteFootball.get('/:ids', async (req: Request, res: Response) => {
-  console.log("back end" + req.params.ids);
+  // console.log("back end" + req.params.ids);
   
     const ids = req.params.ids;
     // const ids = "1208123-1208126-1208131";

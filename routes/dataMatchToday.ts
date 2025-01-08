@@ -23,7 +23,7 @@ routerDataMatchToday.get("/:currentDate", async (req: Request, res: Response) =>
     });
     
     const data = response.data.response;
-    
+ 
   
     let frLigue1Data = [];
     let enPremierLeague = [];
@@ -102,6 +102,7 @@ routerDataMatchToday.get("/:currentDate", async (req: Request, res: Response) =>
         default:
           break;
       }
+      
     }
 
     // Crée un objet pour stocker uniquement les tableaux non vides
@@ -115,12 +116,14 @@ routerDataMatchToday.get("/:currentDate", async (req: Request, res: Response) =>
     if (itSerieA.length > 0) responseData.itSerieA = itSerieA;
     if (esLaliga.length > 0) responseData.esLaliga = esLaliga;
 
+  
     // Vérifie si responseData a des propriétés
     if (Object.keys(responseData).length > 0) {
       res.json({
         result: true,
         ...responseData, // Récupère tous les tableaux non vides
       });
+
     } else {
       // Si aucun tableau n'a de données
       // console.log(responseData);
