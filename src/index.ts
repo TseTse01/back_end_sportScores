@@ -3,7 +3,8 @@ dotenv.config();
 import * as express from 'express';
 import {Application, Response, Request} from 'express';
 import {router} from '../routes/user';
-import {routerDataMatchToday} from '../routes/dataMatchToday';
+import {footballmatch} from '../routes/dataMatchToday';
+import {footballLeague} from '../routes/dataMatchToday';
 import { favorisRouteFootball } from '../routes/favorisRoute';
 import { hockeyRouteMatchs } from '../routes/hockey';
 import { basketballRouteMatchs } from '../routes/basketball';
@@ -26,7 +27,8 @@ app.get('/', (req: Request, res: Response) => {
   });
   
  app.use('/todos', router);
- app.use('/matchToday', routerDataMatchToday);
+ app.use('/matchToday', footballmatch);
+ app.use('/leagues', footballLeague);
  app.use('/favoris', favorisRouteFootball);
  app.use('/hockey', hockeyRouteMatchs);
  app.use('/basketball', basketballRouteMatchs);

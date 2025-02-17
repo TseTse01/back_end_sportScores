@@ -1,10 +1,11 @@
 import { Router, Request, Response } from "express";
 import axios from "axios";
 
-export const routerDataMatchToday = Router();
+export const footballmatch = Router();
+export const footballLeague = Router();
 
 
-routerDataMatchToday.get("/:currentDate", async (req: Request, res: Response) => {
+footballmatch.get("/:currentDate", async (req: Request, res: Response) => {
   const currentDate = req.params.currentDate;  
   // console.log(currentDate);
   
@@ -78,7 +79,7 @@ routerDataMatchToday.get("/:currentDate", async (req: Request, res: Response) =>
         },
       };
 
-      // Utilisation de switch pour simplifier la logique
+   
       switch (d.league.name) {
         case "Ligue 1":
           if (d.league.country === "France") frLigue1Data.push(dataObjet);
@@ -135,3 +136,48 @@ routerDataMatchToday.get("/:currentDate", async (req: Request, res: Response) =>
   }
 });
 
+
+footballLeague.get("/:country", async (req, res) => {
+  const country = req.params.country;  
+  try {
+    // const currentDate = getCurrentDate();
+    const response = await axios.get(`${process.env.LIEN_HTTP_FOOTBALL_LEAGUES}`, {
+      headers: {
+        "x-rapidapi-host": process.env.X_RAPIDAPI_HOST_FOOTBALL,
+        "x-rapidapi-key": process.env.X_RAPIDAPI_KEY,
+      },
+      params: {
+        country: country,
+        season: "2023"
+      },
+    });
+    
+    const data = response.data.response;
+
+
+    let leaguesData = [];
+    
+
+    for (const d of data) {
+      
+      let dataObjet =  {
+        id: d.league.id,
+        leaguename: d.league.name,
+        logo:  d.league.logo,
+        seasons: d.seasons[0].year,
+        current: d.seasons[0].current,
+        country: d.country.name,
+        flag: d.country.flag,
+        start: d.seasons[0].start,
+        end: d.seasons[0].end,
+      }
+      leaguesData.push(dataObjet)
+   
+    }
+  
+    res.json({ result: true, leaguesData });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Failed to fetch match data" });
+    }
+});
