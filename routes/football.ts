@@ -3,7 +3,7 @@ import axios from "axios";
 
 export const footballmatch = Router();
 export const footballLeague = Router();
-
+export const latestMatchLeague = Router();
 
 footballmatch.get("/:currentDate", async (req: Request, res: Response) => {
   const currentDate = req.params.currentDate;  
@@ -181,3 +181,78 @@ footballLeague.get("/:country", async (req, res) => {
       res.status(500).json({ error: "Failed to fetch match data" });
     }
 });
+
+
+latestMatchLeague.get("/:league",async(req,res) => {
+  const leagueId = req.params.league; 
+  try {
+    // const currentDate = getCurrentDate();
+    const response = await axios.get(`${process.env.LIEN_HTTP_FOOTBALL}`, {
+      headers: {
+        "x-rapidapi-host": process.env.X_RAPIDAPI_HOST_FOOTBALL,
+        "x-rapidapi-key": process.env.X_RAPIDAPI_KEY,
+      },
+      params: {
+        league: leagueId,
+        season: "2023",
+        timezone: "Europe/Paris",
+      },
+    });
+    const data = response.data.response;  
+    let matches = [];
+    const getDateUntilT = (dateString) => {
+      if (!dateString) return "";
+      return dateString.split("T")[0];
+  };
+    for (const d of data ) {
+      if (d.fixture.status.long !== "Match Cancelled") {
+        let dataObjet = {
+          fixture: {
+            id: d.fixture.id,
+            date: getDateUntilT(d.fixture.date),
+            timestamp: d.fixture.timestamp,
+            status: {
+              long: d.fixture.status.long,
+              short: d.fixture.status.short,
+            }
+           
+          },
+          league: {
+            id: d.league.id,
+            name: d.league.name,
+            country: d.league.country,
+            logo: d.league.logo,
+            flag: d.league.flag,
+            season: d.league.season,
+            standings: d.league.standings,
+          },
+          teams: {
+            home: {
+              id: d.teams.home.id,
+              name: d.teams.home.name,
+              logo: d.teams.home.logo,
+              winner: d.teams.home.winner,
+            },
+            away: {
+              id: d.teams.away.id,
+              name: d.teams.away.name,
+              logo: d.teams.away.logo,
+              winner: d.teams.away.winner,
+            },
+          },
+          goals: {
+            home: d.goals.home,
+            away: d.goals.away,
+          },
+        };
+  
+        matches.push(dataObjet)
+      } 
+    }
+    matches.sort((a, b) => new Date(b.fixture.date).getTime() - new Date(a.fixture.date).getTime())
+    res.json({result: true, matches})
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch match data" });
+  }
+})
