@@ -1,7 +1,10 @@
 import { Router, Request, Response } from "express";
 import axios from "axios";
+import { timeStamp } from "console";
 
 export const hockeyRouteMatchs = Router();
+export const hockeyLeague = Router();
+export const hockeyLeagueLatestMatch = Router();
 
 hockeyRouteMatchs.get("/:currentDate", async (req: Request, res: Response) => {
   // res.json({result:true})
@@ -122,3 +125,141 @@ hockeyRouteMatchs.get("/:currentDate", async (req: Request, res: Response) => {
     res.status(500).json({ error: "Failed to fetch match data" });
   }
 });
+
+hockeyLeague.get("/:country", async(req,res) => {
+  const country = req.params.country;  
+  try {
+    const response = await axios.get(`${process.env.LIEN_HTTP_HOCKEY_LEAGUES}`, {
+      headers: {
+        "x-rapidapi-host": process.env.X_RAPIDAPI_HOST_HOCKEY,
+        "x-rapidapi-key": process.env.X_RAPIDAPI_KEY,
+      },
+      params: {
+         country: country,
+         season: "2023",
+         // country: "france",
+        // timezone: "Europe/Paris",
+        
+      },
+    });
+    const data = response.data.response;
+
+let leaguesData = [];
+   
+   
+for (const d of data) {
+      
+  let dataObjet =  {
+    id: d.id,
+    leaguename: d.name,
+    logo:  d.logo,
+    country: {
+      countryId: d.country.id,
+      countryName: d.country.name,
+      countryFlag: d.country.flag
+    },
+    season: {
+      seasons: d.seasons[0].season,
+      current: d.seasons[0].current,
+      start: d.seasons[0].start,
+      end: d.seasons[0].end,
+    },
+  }
+  leaguesData.push(dataObjet)
+
+}
+
+
+res.json({ result: true, leaguesData });
+
+ 
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch match data" });
+  }
+})
+
+hockeyLeagueLatestMatch.get("/:leagueId", async(req,res) => {
+  try {
+    const response = await axios.get(`${process.env.LIEN_HTTP_HOCKEY}`, {
+      headers: {
+        "x-rapidapi-host": process.env.X_RAPIDAPI_HOST_HOCKEY,
+        "x-rapidapi-key": process.env.X_RAPIDAPI_KEY,
+      },
+      params: {
+        league: "81",
+        season: "2023",
+        timezone: "Europe/Paris",
+        // ids: ids,
+      },
+    });
+    const data = response.data.response;
+
+    let matches = [];
+    const getDateUntilT = (dateString: string) => {
+      if (!dateString) return "";
+      return dateString.split("T")[0];
+  };
+  for(const d of data) {
+    if(d.status.long !== "Match Cancelled") {
+      let dataObjet = {
+        fixture: {
+          id: d.id,
+          date: getDateUntilT(d.date),
+          timeStamp: d.timestamp,
+          time: d.time,
+          status: {
+            long: d.status.long,
+            short: d.status.short,
+          }
+        },
+        country: {
+          id: d.country.id,
+          name: d.country.name,
+          flag: d.country.flag,
+        },
+        league: {
+          id: d.league.id,
+          name: d.league.name,
+          logo: d.league.logo,
+          season: d.league.season
+        },
+        teams:{
+          home: {
+            id: d.teams.home.id,
+            name: d.teams.home.name,
+            logo: d.teams.home.logo,
+          },
+          away: {
+            id: d.teams.away.id,
+            name: d.teams.away.name,
+            logo: d.teams.away.logo,
+          },
+        },
+        scores: {
+          home: d.scores.home,
+          away: d.scores.away,
+        },
+        periods: {
+        first: d.periods.first,
+        second: d.periods.second,
+        third: d.periods.third,
+        overtime: d.periods.overtime,
+        penalties: d.periods.penalties,
+      },
+      }
+      
+      matches.push(dataObjet)
+    }
+  }
+
+
+
+
+  matches.sort((a, b) => new Date(b.fixture.date).getTime() - new Date(a.fixture.date).getTime())
+  res.json({result: true, matches})
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch match data" });
+  }
+})
