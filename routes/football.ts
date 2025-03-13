@@ -1,10 +1,11 @@
 import { Router, Request, Response } from "express";
 import axios from "axios";
 
+
 export const footballmatch = Router();
 export const footballLeague = Router();
-export const latestMatchLeague = Router();
-export const standings = Router();
+export const footballatestMatchLeague = Router();
+export const footballStandings = Router();
 
 footballmatch.get("/:currentDate", async (req: Request, res: Response) => {
   const currentDate = req.params.currentDate;  
@@ -140,6 +141,8 @@ footballmatch.get("/:currentDate", async (req: Request, res: Response) => {
 
 footballLeague.get("/:country", async (req, res) => {
   const country = req.params.country;  
+  // console.log(country, "country");
+  
   try {
  
     const response = await axios.get(`${process.env.LIEN_HTTP_FOOTBALL_LEAGUES}`, {
@@ -154,6 +157,7 @@ footballLeague.get("/:country", async (req, res) => {
     });
     
     const data = response.data.response;
+// console.log(data, "data");
 
 
     let leaguesData = [];
@@ -184,7 +188,7 @@ footballLeague.get("/:country", async (req, res) => {
 });
 
 
-latestMatchLeague.get("/:leagueId",async(req,res) => {
+footballatestMatchLeague.get("/:leagueId",async(req,res) => {
   const leagueId = req.params.leagueId; 
   try {
     // const currentDate = getCurrentDate();
@@ -257,9 +261,14 @@ latestMatchLeague.get("/:leagueId",async(req,res) => {
     res.status(500).json({ error: "Failed to fetch match data" });
   }
 })
-standings.get("/", async (req,res) => {
-  // const leagueId = req.params.leagueId; 
-  // const season = req.params.season; 
+
+
+
+footballStandings.get("/:leagueId/:season", async (req,res) => {
+  const leagueId = req.params.leagueId; 
+  const season = req.params.season; 
+  // console.log("backend", season,leagueId);
+  
   try {
     // const currentDate = getCurrentDate();
     const response = await axios.get(`${process.env.LIEN_HTTP_FOOTBALL_STANDINGS}`, {
@@ -268,66 +277,16 @@ standings.get("/", async (req,res) => {
         "x-rapidapi-key": process.env.X_RAPIDAPI_KEY,
       },
       params: {
-        league: "39",
-        season:"2023",
-        // league: leagueId,
-        // season: season,
-        timezone: "Europe/Paris",
+        league: leagueId,
+        season: season,
+        // TEST
+        // league: "39",
+        // season:"2023",
       },
     });
-    const data = response.data.response;  
-    let matches = [];
-    const getDateUntilT = (dateString: string) => {
-      if (!dateString) return "";
-      return dateString.split("T")[0];
-  };
-    // for (const d of data ) {
-    //   if (d.fixture.status.long !== "Match Cancelled") {
-    //     let dataObjet = {
-    //       fixture: {
-    //         id: d.fixture.id,
-    //         date: getDateUntilT(d.fixture.date),
-    //         timestamp: d.fixture.timestamp,
-    //         status: {
-    //           long: d.fixture.status.long,
-    //           short: d.fixture.status.short,
-    //         }
-           
-    //       },
-    //       league: {
-    //         id: d.league.id,
-    //         name: d.league.name,
-    //         country: d.league.country,
-    //         logo: d.league.logo,
-    //         flag: d.league.flag,
-    //         season: d.league.season,
-    //         standings: d.league.standings,
-    //       },
-    //       teams: {
-    //         home: {
-    //           id: d.teams.home.id,
-    //           name: d.teams.home.name,
-    //           logo: d.teams.home.logo,
-    //           winner: d.teams.home.winner,
-    //         },
-    //         away: {
-    //           id: d.teams.away.id,
-    //           name: d.teams.away.name,
-    //           logo: d.teams.away.logo,
-    //           winner: d.teams.away.winner,
-    //         },
-    //       },
-    //       goals: {
-    //         home: d.goals.home,
-    //         away: d.goals.away,
-    //       },
-    //     };
+    const data = response.data.response[0].league.standings;  
   
-    //     matches.push(dataObjet)
-    //   } 
-    // }
-    // matches.sort((a, b) => new Date(b.fixture.date).getTime() - new Date(a.fixture.date).getTime())
-    res.json({result: true, data})
+    res.json({result: true, ...data})
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to fetch match data" });

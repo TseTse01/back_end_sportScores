@@ -1,10 +1,11 @@
 import { Router, Request, Response } from "express";
 import axios from "axios";
-import { timeStamp } from "console";
+
 
 export const hockeyRouteMatchs = Router();
 export const hockeyLeague = Router();
 export const hockeyLeagueLatestMatch = Router();
+export const hockeyStandings = Router();
 
 hockeyRouteMatchs.get("/:currentDate", async (req: Request, res: Response) => {
   // res.json({result:true})
@@ -180,6 +181,7 @@ res.json({ result: true, leaguesData });
 })
 
 hockeyLeagueLatestMatch.get("/:leagueId", async(req,res) => {
+  const leagueId = req.params.leagueId;  
   try {
     const response = await axios.get(`${process.env.LIEN_HTTP_HOCKEY}`, {
       headers: {
@@ -187,7 +189,7 @@ hockeyLeagueLatestMatch.get("/:leagueId", async(req,res) => {
         "x-rapidapi-key": process.env.X_RAPIDAPI_KEY,
       },
       params: {
-        league: "81",
+        league: leagueId,
         season: "2023",
         timezone: "Europe/Paris",
         // ids: ids,
@@ -262,4 +264,35 @@ hockeyLeagueLatestMatch.get("/:leagueId", async(req,res) => {
     console.error(error);
     res.status(500).json({ error: "Failed to fetch match data" });
   }
+})
+
+
+hockeyStandings.get("/:leagueId/:season", async(req,res) => {
+  const leagueId = req.params.leagueId; 
+  const season = req.params.season; 
+  // console.log("backend", season,leagueId);
+  
+  try {
+    // const currentDate = getCurrentDate();
+    const response = await axios.get(`${process.env.LIEN_HTTP_HOCKEY_STANDINGS}`, {
+      headers: {
+        "x-rapidapi-host": process.env.X_RAPIDAPI_HOST_HOCKEY,
+        "x-rapidapi-key": process.env.X_RAPIDAPI_KEY,
+      },
+      params: {
+        league: leagueId,
+        season:"2023",
+        // TEST
+        // season: season,
+        // league: "81",
+      },
+    });
+    const data = response.data.response[0];  
+  
+    res.json({result: true, data})
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to fetch match data" });
+  }
+  
 })

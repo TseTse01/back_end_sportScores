@@ -2,6 +2,7 @@ import { Router, Request, Response } from "express";
 import axios from "axios";
 
 export const mmaRouteMatchs = Router();
+export const mmaLatestMatch = Router();
 
 mmaRouteMatchs.get("/", async (req:Request,res: Response) => {
     const currentDate = req.params.currentDate;
@@ -69,7 +70,7 @@ mmaRouteMatchs.get("/", async (req:Request,res: Response) => {
               case "Flyweight":
                  Flyweight.push(dataObjet);
                 break;
-              case "Lightweigh":
+              case "Lightweight":
                  Lightweight.push(dataObjet);
                 break;
               case "Women's Bantamweight":
@@ -114,4 +115,64 @@ mmaRouteMatchs.get("/", async (req:Request,res: Response) => {
           console.error(error);
           res.status(500).json({ error: "Failed to fetch match data" });
         }
+})
+
+mmaLatestMatch.get("/:category", async(req,res) => {
+  const category = req.params.category;
+  try {
+    const response = await axios.get(`${process.env.LIEN_HTTP_MMA}`, {
+      headers: {
+        "x-rapidapi-host": process.env.X_RAPIDAPI_HOST_MMA,
+        "x-rapidapi-key": process.env.X_RAPIDAPI_KEY,
+      },
+      params: {
+      //   date: currentDate,
+      category: category,
+      season: "2023",
+      },
+    });
+    const data = response.data.response;
+    // res.json({data})
+    // console.log(response.data.response);
+    
+       const  latestMatches = [];
+    
+        for (const d of data) {
+          let dataObjet = {
+            fixture: {
+              id: d.id,
+              date: d.date,
+              time: d.time,
+              timestamp: d.timestamp,
+              is_main: d.is_main,
+              category: d.category,
+              slug: d.slug,
+            },
+            status: {
+              long: d.status.long,
+              short: d.status.short,
+            },
+            fighters: {
+              first:{
+                  id: d.fighters.first.id,
+                  name: d.fighters.first.name,
+                  logo: d.fighters.first.logo,
+                  winner: d.fighters.first.winner,
+              },
+              second:{
+                  id: d.fighters.second.id,
+                  name: d.fighters.second.name,
+                  logo: d.fighters.second.logo,
+                  winner: d.fighters.second.winner,
+              },
+            }
+          
+          }
+          latestMatches.push(dataObjet)
+      }
+      res.json({result: true, latestMatches})
+     } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to fetch match data" });
+      }
 })
