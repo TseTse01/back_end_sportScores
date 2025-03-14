@@ -233,14 +233,14 @@ rougbytlatestMatch.get("/:leagueId", async (req, res) => {
         },
         teams: {
           home: {
-            id: d.teams.home,
-            name: d.teams.name,
-            logo: d.teams.logo,
+            id: d.teams.home.id,
+            name: d.teams.home.name,
+            logo: d.teams.home.logo,
           },
           away: {
-            id: d.teams.away,
-            name: d.teams.away,
-            logo: d.teams.away,
+            id: d.teams.away.id,
+            name: d.teams.away.name,
+            logo: d.teams.away.logo,
           },
         },
         scores: {

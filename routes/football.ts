@@ -284,9 +284,9 @@ footballStandings.get("/:leagueId/:season", async (req,res) => {
         // season:"2023",
       },
     });
-    const data = response.data.response[0].league.standings;  
+    const data = response.data.response[0].league.standings[0];  
   
-    res.json({result: true, ...data})
+    res.json({result: true, data})
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to fetch match data" });
